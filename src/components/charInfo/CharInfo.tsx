@@ -1,6 +1,11 @@
 import './charInfo.scss';
 import thor from '../../resources/img/thor.jpeg';
 
+
+
+
+
+
 const CharInfo = () => {
     return (
         <div className="char__info">
