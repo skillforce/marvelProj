@@ -3,6 +3,9 @@ import thor from '../../resources/img/thor.jpeg';
 import mjolnir from '../../resources/img/mjolnir.png';
 import {Component} from 'react';
 import {MarvelService} from '../../services/MarvelService';
+import Spinner from '../preloader/preloader';
+import {ErrorMsg} from '../ErrorMsg/ErrorMsg';
+
 
 type thumbNailType = {
     path: string
@@ -22,12 +25,14 @@ type CharType = {
 
 type RandomCharStateType = {
     char: CharType
+    loading: boolean
+    error: boolean
 }
 
 class RandomChar extends Component<{}, RandomCharStateType> {
+
     constructor(props: {}) {
         super(props);
-        this.updateChar()
     }
 
     state = {
@@ -37,45 +42,54 @@ class RandomChar extends Component<{}, RandomCharStateType> {
             thumbnail: null,
             homePage: null,
             wikiUrl: null
+        },
+        loading: true,
+        error: false
+    }
+    timerId = null as NodeJS.Timeout | null;
+
+    componentDidMount() {
+        this.updateChar()
+        // this.timerId = setInterval(this.updateChar, 3000)
+    }
+
+    componentWillUnmount() {
+        if (this.timerId) {
+            clearInterval(this.timerId)
         }
     }
 
     marvelService = new MarvelService()
 
+
     onCharLoaded = (char: CharType) => {
-        this.setState((state) => ({...state, char}))
+        this.setState({char, loading: false})
     }
 
-    randomChar= Math.floor(Math.random() * (1011400 - 1011000) + 1011000)
 
-    updateChar = (id: number = this.randomChar) => {
+    updateChar = (id: number = Math.floor(Math.random() * (1011400 - 1011000) + 1011000)) => {
+        this.setState({loading: true})
         this.marvelService
-            .getCharacter(id).then(this.onCharLoaded)
+            .getCharacter(id)
+            .then(this.onCharLoaded)
+            .catch(this.onError)
+        console.log('tick')
+    }
+
+    onError = () => {
+        this.setState({loading: false, error: true})
+
     }
 
 
     render() {
-        const {char: {name, description, thumbnail, homePage, wikiUrl}} = this.state
+        const {char, loading, error} = this.state
+        const isLoading = loading ? <Spinner/> : <View char={char}/>
+        const errorMsg = error ? <ErrorMsg/> : isLoading
 
         return (
             <div className="randomchar">
-                <div className="randomchar__block">
-                    <img src={thumbnail ? thumbnail : thor} alt="Random character" className="randomchar__img"/>
-                    <div className="randomchar__info">
-                        <p className="randomchar__name">{name ? name : 'Thor'}</p>
-                        <p className="randomchar__descr">
-                            {description ? description : 'No descriptions'}
-                        </p>
-                        <div className="randomchar__btns">
-                            <a href={homePage ? homePage : '#'} className="button button__main">
-                                <div className="inner">homepage</div>
-                            </a>
-                            <a href={wikiUrl ? wikiUrl : '#'} className="button button__secondary">
-                                <div className="inner">Wiki</div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                {errorMsg}
                 <div className="randomchar__static">
                     <p className="randomchar__title">
                         Random character for today!<br/>
@@ -92,6 +106,33 @@ class RandomChar extends Component<{}, RandomCharStateType> {
             </div>
         )
     }
+}
+
+type ViewPropsType = {
+    char: CharType
+}
+
+const View = (char: ViewPropsType) => {
+
+    const {name, description, thumbnail, homePage, wikiUrl} = char.char;
+
+    return (<div className="randomchar__block">
+        <img src={thumbnail ? thumbnail : thor} alt="Random character" className="randomchar__img"/>
+        <div className="randomchar__info">
+            <p className="randomchar__name">{name ? name : 'Thor'}</p>
+            <p className="randomchar__descr">
+                {description ? description : 'No descriptions'}
+            </p>
+            <div className="randomchar__btns">
+                <a href={homePage ? homePage : '#'} className="button button__main">
+                    <div className="inner">homepage</div>
+                </a>
+                <a href={wikiUrl ? wikiUrl : '#'} className="button button__secondary">
+                    <div className="inner">Wiki</div>
+                </a>
+            </div>
+        </div>
+    </div>)
 }
 
 export default RandomChar;
