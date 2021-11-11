@@ -20,6 +20,7 @@ export class MarvelService {
         console.log(res)
         return res.data.results.map(this._transformCharacter)
     }
+
     getCharacter = async (id: number) => {
         const res = await this.getResource(`${this._apiBase}characters/${id}?apikey=${this._apiKey}`);
         return this._transformCharacter(res)
@@ -27,14 +28,15 @@ export class MarvelService {
 
     _transformCharacter = (res: any) => {
         let character = res.data ? res.data.results[0] : res
-        const {name, description, thumbnail, urls} = character
+        const {name, description, thumbnail, urls,id} = character
         const correctThumbNail = `${thumbnail.path}.${thumbnail.extension}`
         return {
             name,
-            description,
+            description:description ? `${description.slice(0, 210)}...` : 'There is no description for this character',
             thumbnail: correctThumbNail,
             homePage: urls[0].url,
-            wikiUrl: urls[1].url
+            wikiUrl: urls[1].url,
+            id
         }
     }
 

@@ -15,12 +15,13 @@ type UrlType = {
     type: string
     url: string
 }
-type CharType = {
+export type CharType = {
     name: null | string
     description: null | string
     thumbnail: string | null
     homePage: string | null
     wikiUrl: string | null
+    id:number|null
 }
 
 type RandomCharStateType = {
@@ -41,7 +42,8 @@ class RandomChar extends Component<{}, RandomCharStateType> {
             description: null,
             thumbnail: null,
             homePage: null,
-            wikiUrl: null
+            wikiUrl: null,
+            id:null
         },
         loading: true,
         error: false
@@ -73,7 +75,6 @@ class RandomChar extends Component<{}, RandomCharStateType> {
             .getCharacter(id)
             .then(this.onCharLoaded)
             .catch(this.onError)
-        console.log('tick')
     }
 
     onError = () => {
@@ -112,16 +113,22 @@ type ViewPropsType = {
     char: CharType
 }
 
+
 const View = (char: ViewPropsType) => {
 
     const {name, description, thumbnail, homePage, wikiUrl} = char.char;
+    const notAvailableImg = 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg'
+    const real = thumbnail === notAvailableImg
+    const newImgStyle = real ? 'randomchar__badImg' : 'randomchar__img'
+
 
     return (<div className="randomchar__block">
-        <img src={thumbnail ? thumbnail : thor} alt="Random character" className="randomchar__img"/>
+        <img src={thumbnail ? thumbnail : thor} alt="Random character" className={newImgStyle}/>
+
         <div className="randomchar__info">
             <p className="randomchar__name">{name ? name : 'Thor'}</p>
             <p className="randomchar__descr">
-                {description ? description : 'No descriptions'}
+                {description}
             </p>
             <div className="randomchar__btns">
                 <a href={homePage ? homePage : '#'} className="button button__main">
