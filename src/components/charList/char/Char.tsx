@@ -20,8 +20,8 @@ class Char extends Component<CharPropsType> {
         const correctImgClass = img === notAvailableImg ? 'char__badItem' : 'char__item'
 
         return (
-            <li onClick={()=>setSelectedChar(id?id:1010338)} className={correctImgClass}>
-                <img src={img ? img : abyss} alt="abyss"/>
+            <li  className={correctImgClass}>
+                <img onClick={()=>setSelectedChar(id)} src={img ? img : abyss} alt="abyss"/>
                 <div className="char__name">{name ? name : 'not found'}</div>
             </li>
         )

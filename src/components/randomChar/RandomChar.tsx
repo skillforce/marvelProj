@@ -5,6 +5,7 @@ import {Component} from 'react';
 import {MarvelService} from '../../services/MarvelService';
 import Spinner from '../preloader/preloader';
 import {ErrorMsg} from '../ErrorMsg/ErrorMsg';
+import React from 'react';
 
 
 type thumbNailType = {
@@ -21,7 +22,7 @@ export type CharType = {
     thumbnail: string | null
     homePage: string | null
     wikiUrl: string | null
-    id:number|null
+    id: number | null
 }
 
 type RandomCharStateType = {
@@ -43,7 +44,7 @@ class RandomChar extends Component<{}, RandomCharStateType> {
             thumbnail: null,
             homePage: null,
             wikiUrl: null,
-            id:null
+            id: null
         },
         loading: true,
         error: false
@@ -131,10 +132,10 @@ const View = (char: ViewPropsType) => {
                 {description}
             </p>
             <div className="randomchar__btns">
-                <a href={homePage ? homePage : '#'} className="button button__main">
+                <a target={'_blank'} href={homePage ? homePage : '#'} className="button button__main">
                     <div className="inner">homepage</div>
                 </a>
-                <a href={wikiUrl ? wikiUrl : '#'} className="button button__secondary">
+                <a target={'_blank'} href={wikiUrl ? wikiUrl : '#'} className="button button__secondary">
                     <div className="inner">Wiki</div>
                 </a>
             </div>

@@ -4,6 +4,7 @@ import CharList from '../charList/CharList';
 import CharInfo from '../charInfo/CharInfo';
 import decoration from '../../resources/img/vision.png';
 import {Component} from 'react';
+import Skeleton from '../skeleton/Skeleton';
 
 type AppStateType ={
     selectedChar:number|null
@@ -34,6 +35,7 @@ class App extends Component<{},AppStateType> {
                     </div>
                     <img className="bg-decoration" src={decoration} alt="vision"/>
                 </main>
+
             </div>
         )
     }

@@ -17,7 +17,6 @@ export class MarvelService {
 
     getAllCharacters = async () => {
         const res: any = await this.getResource(`${this._apiBase}characters?limit=9&offset=210&apikey=${this._apiKey}`);
-        console.log(res)
         return res.data.results.map(this._transformCharacter)
     }
 
@@ -28,15 +27,20 @@ export class MarvelService {
 
     _transformCharacter = (res: any) => {
         let character = res.data ? res.data.results[0] : res
-        const {name, description, thumbnail, urls,id} = character
+        const {name, description, thumbnail, urls, id, comics} = character
         const correctThumbNail = `${thumbnail.path}.${thumbnail.extension}`
+
+        const correctComicsItems = comics.items.length > 10 ? comics.items.slice(0, 10) : comics.items
+        const correctDescription = description ? `${description.slice(0, 210)}...` : 'There is no description for this character'
+
         return {
             name,
-            description:description ? `${description.slice(0, 210)}...` : 'There is no description for this character',
+            description: correctDescription,
             thumbnail: correctThumbNail,
             homePage: urls[0].url,
             wikiUrl: urls[1].url,
-            id
+            id,
+            comics: correctComicsItems
         }
     }
 

@@ -1,4 +1,4 @@
-@import '../../style/variables.scss';
+@import '../../../style/variables.scss';
 
 .char {
     &__info {
@@ -25,16 +25,6 @@
             width: 150px;
             height: 150px;
             object-fit: cover;
-        }
-    }
-    &__badBasics {
-        display: grid;
-        grid-template-columns: 150px auto;
-        column-gap: 25px;
-        img {
-            width: 150px;
-            height: 150px;
-            object-fit: contain;
         }
     }
     &__btns {
