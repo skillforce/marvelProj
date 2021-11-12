@@ -9,27 +9,35 @@ import {ErrorMsg} from '../ErrorMsg/ErrorMsg';
 type CharListStateType = {
     charactersData: CharType[]
     loading: boolean
-    error: boolean
+    error: boolean,
+    pageOffset: number
+    charEnded: boolean
 }
 
 type CharListPropsType = {
-    setSelectedChar: (id: number|null) => void
+    setSelectedChar: (id: number | null) => void
 }
 
 
 class CharList extends Component<CharListPropsType, CharListStateType> {
-
+    marvelService = new MarvelService()
     state = {
         charactersData: [] as CharType[],
         loading: true,
-        error: false
+        error: false,
+        pageOffset: 1540,
+        charEnded: false
     }
 
 
-    marvelService = new MarvelService()
-
-    componentDidMount() {
+    componentDidMount = () => {
         this.updateCharListItem()
+    }
+
+    componentDidUpdate(prevProps: Readonly<CharListPropsType>, prevState: Readonly<CharListStateType>) {
+        {
+            prevState.pageOffset !== this.state.pageOffset && this.updateCharListItem()
+        }
     }
 
     onCharLoaded = (charactersData: CharType[]) => {
@@ -40,24 +48,37 @@ class CharList extends Component<CharListPropsType, CharListStateType> {
         this.setState({loading: false, error: true})
     }
 
-    updateCharListItem() {
+    updateCharListItem = () => {
+        const {pageOffset} = this.state
         this.setState({loading: true})
-        this.marvelService.getAllCharacters()
-            .then(this.onCharLoaded)
+        this.marvelService.getAllCharacters(pageOffset)
+            .then(res => {
+                {res.length < 9 && this.setState({charEnded: true})}
+                {res.length === 9 && this.setState({charEnded: false})}
+
+                this.onCharLoaded(res)
+            })
             .catch(this.onError)
+    }
+    onClickLoadMoreBtnHandler = (offset: number) => {
+        this.setState(({pageOffset}) => ({pageOffset: pageOffset + offset}))
     }
 
 
     render() {
 
-        const {charactersData, loading, error} = this.state
+        const {charactersData, loading, error, charEnded} = this.state
         const {setSelectedChar} = this.props
 
-        const isLoading = loading ? <Spinner/> : <ul className="char__grid"> {charactersData.map((t, i) => <Char key={t.id}
-                                                                                                                 name={t.name}
-                                                                                                                 img={t.thumbnail}
-                                                                                                                 id={t.id}
-                                                                                                                 setSelectedChar={setSelectedChar}/>)}</ul>
+        const correctBtnClassName = loading ? 'button button__secondary button__long' : 'button button__main button__long'
+
+
+        const isLoading = loading ? <div className={'spinerPage'}><Spinner/></div> :
+            <ul className="char__grid"> {charactersData.map(t => <Char key={t.id}
+                                                                       name={t.name}
+                                                                       img={t.thumbnail}
+                                                                       id={t.id}
+                                                                       setSelectedChar={setSelectedChar}/>)}</ul>
 
 
         const isError = error ? <ErrorMsg/> : isLoading;
@@ -66,9 +87,16 @@ class CharList extends Component<CharListPropsType, CharListStateType> {
         return (
             <div className="char__list">
                 {isError}
-                <button className="button button__main button__long">
-                    <div className="inner">load more</div>
-                </button>
+                <div className={'btn_block'}>
+                    <button disabled={loading} onClick={() => this.onClickLoadMoreBtnHandler(-9)}
+                            className={correctBtnClassName}>
+                        <div className="inner">Previous Page</div>
+                    </button>
+                    {!charEnded && <button disabled={loading} onClick={() => this.onClickLoadMoreBtnHandler(9)}
+                                           className={correctBtnClassName}>
+                        <div className="inner">Next page</div>
+                    </button>}
+                </div>
             </div>
         )
     }
