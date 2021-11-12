@@ -58,6 +58,7 @@ class CharInfo extends Component<CharInfoPropsType, CharInfoStateType> {
     constructor(props: CharInfoPropsType) {
         super(props);
 
+
     }
 
     componentDidUpdate(prevProps: Readonly<CharInfoPropsType>, prevState: Readonly<CharInfoStateType>, snapshot?: any) {
@@ -70,11 +71,13 @@ class CharInfo extends Component<CharInfoPropsType, CharInfoStateType> {
     marvelService = new MarvelService()
 
     componentDidMount() {
+
         this.updateChar()
     }
 
 
     onCharLoaded = (char: CharInfoCharType) => {
+
         this.setState({char, loading: false})
     }
 
@@ -82,13 +85,14 @@ class CharInfo extends Component<CharInfoPropsType, CharInfoStateType> {
     updateChar = () => {
         this.setState({loading: true})
         const {charId} = this.props
+
+
         if (!charId) {
             this.setState({loading: false})
         }
         {
             charId && this.marvelService.getCharacter(charId).then(this.onCharLoaded).catch(this.onError)
         }
-
     }
 
 

@@ -4,34 +4,40 @@ import CharList from '../charList/CharList';
 import CharInfo from '../charInfo/CharInfo';
 import decoration from '../../resources/img/vision.png';
 import {Component} from 'react';
-import Skeleton from '../skeleton/Skeleton';
+import {ErrorBoundary} from '../errorBoundary/ErrorBoundary';
 
-type AppStateType ={
-    selectedChar:number|null
+type AppStateType = {
+    selectedChar: number | null
 }
 
 
-class App extends Component<{},AppStateType> {
+class App extends Component<{}, AppStateType> {
 
     state = {
-        selectedChar:null as null|number
+        selectedChar: null as null | number
     }
 
-    setSelectedChar=(id:number|null)=>{
-        this.setState({selectedChar:id})
+    setSelectedChar = (id: number | null) => {
+        this.setState({selectedChar: id})
     }
 
 
     render() {
-        const{selectedChar}=this.state
+        const {selectedChar} = this.state
         return (
             <div className="app">
                 <AppHeader/>
                 <main>
-                    <RandomChar/>
+                    <ErrorBoundary>
+                        <RandomChar/>
+                    </ErrorBoundary>
                     <div className="char__content">
-                        <CharList setSelectedChar={this.setSelectedChar}/>
-                        <CharInfo charId={selectedChar}/>
+                        <ErrorBoundary>
+                            <CharList setSelectedChar={this.setSelectedChar}/>
+                        </ErrorBoundary>
+                        <ErrorBoundary>
+                            <CharInfo charId={selectedChar}/>
+                        </ErrorBoundary>
                     </div>
                     <img className="bg-decoration" src={decoration} alt="vision"/>
                 </main>
