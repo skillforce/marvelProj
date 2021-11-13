@@ -33,7 +33,7 @@ class App extends Component<{}, AppStateType> {
                     </ErrorBoundary>
                     <div className="char__content">
                         <ErrorBoundary>
-                            <CharList setSelectedChar={this.setSelectedChar}/>
+                            <CharList charId={selectedChar} setSelectedChar={this.setSelectedChar}/>
                         </ErrorBoundary>
                         <ErrorBoundary>
                             <CharInfo charId={selectedChar}/>

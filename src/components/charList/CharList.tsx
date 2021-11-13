@@ -16,6 +16,7 @@ type CharListStateType = {
 
 type CharListPropsType = {
     setSelectedChar: (id: number | null) => void
+    charId:number|null
 }
 
 
@@ -25,7 +26,7 @@ class CharList extends Component<CharListPropsType, CharListStateType> {
         charactersData: [] as CharType[],
         loading: true,
         error: false,
-        pageOffset: 1540,
+        pageOffset: this.marvelService._baseOffset,
         charEnded: false
     }
 
@@ -53,8 +54,12 @@ class CharList extends Component<CharListPropsType, CharListStateType> {
         this.setState({loading: true})
         this.marvelService.getAllCharacters(pageOffset)
             .then(res => {
-                {res.length < 9 && this.setState({charEnded: true})}
-                {res.length === 9 && this.setState({charEnded: false})}
+                {
+                    res.length < 9 && this.setState({charEnded: true})
+                }
+                {
+                    res.length === 9 && this.setState({charEnded: false})
+                }
 
                 this.onCharLoaded(res)
             })
@@ -67,14 +72,15 @@ class CharList extends Component<CharListPropsType, CharListStateType> {
 
     render() {
 
-        const {charactersData, loading, error, charEnded} = this.state
-        const {setSelectedChar} = this.props
+        const {charactersData, loading, error, charEnded, pageOffset} = this.state
+        const {setSelectedChar,charId} = this.props
 
         const correctBtnClassName = loading ? 'button button__secondary button__long' : 'button button__main button__long'
 
 
         const isLoading = loading ? <div className={'spinerPage'}><Spinner/></div> :
-            <ul className="char__grid"> {charactersData.map(t => <Char key={t.id}
+            <ul className="char__grid"> {charactersData.map(t => <Char charId={charId}
+                                                                       key={t.id}
                                                                        name={t.name}
                                                                        img={t.thumbnail}
                                                                        id={t.id}
@@ -88,10 +94,10 @@ class CharList extends Component<CharListPropsType, CharListStateType> {
             <div className="char__list">
                 {isError}
                 <div className={'btn_block'}>
-                    <button disabled={loading} onClick={() => this.onClickLoadMoreBtnHandler(-9)}
-                            className={correctBtnClassName}>
+                    {pageOffset !== 210 && <button disabled={loading} onClick={() => this.onClickLoadMoreBtnHandler(-9)}
+                                                   className={correctBtnClassName}>
                         <div className="inner">Previous Page</div>
-                    </button>
+                    </button>}
                     {!charEnded && <button disabled={loading} onClick={() => this.onClickLoadMoreBtnHandler(9)}
                                            className={correctBtnClassName}>
                         <div className="inner">Next page</div>
