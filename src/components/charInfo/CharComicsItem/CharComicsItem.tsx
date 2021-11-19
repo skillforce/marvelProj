@@ -9,6 +9,26 @@ type CharComicsItemPropsType = {
 }
 
 
+//
+// export const CharComicsItem=(props:CharComicsItemPropsType)=>{
+//     const{comics}=props;
+//
+//     if(comics){
+//         return (
+//             <>
+//                 <li className="char__comics-item">
+//                     {comics.name}
+//                 </li>
+//             </>
+//         )
+//     }else{
+//         return(<Skeleton/>
+//         )
+//     }
+// }
+
+
+
 export class CharComicsItem extends Component<CharComicsItemPropsType, {}> {
 
 

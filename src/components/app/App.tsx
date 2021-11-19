@@ -3,48 +3,42 @@ import RandomChar from '../randomChar/RandomChar';
 import CharList from '../charList/CharList';
 import CharInfo from '../charInfo/CharInfo';
 import decoration from '../../resources/img/vision.png';
-import {Component} from 'react';
+import {Component, useState} from 'react';
 import {ErrorBoundary} from '../errorBoundary/ErrorBoundary';
-
-type AppStateType = {
-    selectedChar: number | null
-}
+import React from 'react';
 
 
-class App extends Component<{}, AppStateType> {
-
-    state = {
-        selectedChar: null as null | number
-    }
-
-    setSelectedChar = (id: number | null) => {
-        this.setState({selectedChar: id})
-    }
+export const App = () => {
 
 
-    render() {
-        const {selectedChar} = this.state
-        return (
-            <div className="app">
-                <AppHeader/>
-                <main>
+    const [selectedChar, setChar] = useState<number | null>(null)
+
+
+
+    const setSelectedChar = (id: number | null) => setChar(id)
+
+
+    return (
+        <div className="app">
+            <AppHeader/>
+            <main>
+                <ErrorBoundary>
+                    <RandomChar/>
+                </ErrorBoundary>
+                <div className="char__content">
                     <ErrorBoundary>
-                        <RandomChar/>
+                        <CharList charId={selectedChar} setSelectedChar={setSelectedChar}/>
                     </ErrorBoundary>
-                    <div className="char__content">
-                        <ErrorBoundary>
-                            <CharList charId={selectedChar} setSelectedChar={this.setSelectedChar}/>
-                        </ErrorBoundary>
-                        <ErrorBoundary>
-                            <CharInfo charId={selectedChar}/>
-                        </ErrorBoundary>
-                    </div>
-                    <img className="bg-decoration" src={decoration} alt="vision"/>
-                </main>
+                    <ErrorBoundary>
+                        <CharInfo charId={selectedChar}/>
+                    </ErrorBoundary>
+                </div>
+                <img className="bg-decoration" src={decoration} alt="vision"/>
+            </main>
 
-            </div>
-        )
-    }
+        </div>
+    )
 }
+
 
 export default App;

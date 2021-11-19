@@ -1,8 +1,7 @@
 import './charInfo.scss';
 import thor from '../../resources/img/thor.jpeg';
-import {Component} from 'react';
+import {Component, useEffect, useState} from 'react';
 import {MarvelService} from '../../services/MarvelService';
-import {CharType} from '../randomChar/RandomChar';
 import React from 'react';
 import {CharComicsItem} from './CharComicsItem/CharComicsItem';
 import Spinner from '../preloader/preloader';
@@ -28,97 +27,64 @@ type CharInfoCharType = {
     comics: null | ComicsItemsType[] | []
 }
 
-type CharInfoStateType = {
-    char: CharInfoCharType | null
-    loading: boolean
-    error: boolean
-}
 
 type ViewCharInfoPropsType = {
     char: CharInfoCharType
 }
 
 
-class CharInfo extends Component<CharInfoPropsType, CharInfoStateType> {
+export const CharInfo = (props: CharInfoPropsType) => {
+    const {charId} = props
+    const marvelService = new MarvelService()
+    const [char, setChar] = useState<CharInfoCharType>({
+        name: null,
+        description: null,
+        thumbnail: null,
+        homePage: null,
+        wikiUrl: null,
+        id: null,
+        comics: null
+    })
 
-    state = {
-        char: {
-            name: null,
-            description: null,
-            thumbnail: null,
-            homePage: null,
-            wikiUrl: null,
-            id: null,
-            comics: null
-        } as CharInfoCharType,
-        loading: false,
-        error: false
+    const [loading, setLoading] = useState<boolean>(false)
+    const [error, setError] = useState<boolean>(false)
+
+
+    const onCharLoaded = (char: CharInfoCharType) => {
+        setChar(char)
+        setLoading(false)
     }
 
-    constructor(props: CharInfoPropsType) {
-        super(props);
+    useEffect(() => {
+        updateChar()
+    }, [charId])
 
 
-    }
-
-    componentDidUpdate(prevProps: Readonly<CharInfoPropsType>, prevState: Readonly<CharInfoStateType>, snapshot?: any) {
-        if (prevProps !== this.props) {
-            this.updateChar()
-        }
-    }
-
-
-    marvelService = new MarvelService()
-
-    componentDidMount() {
-
-        this.updateChar()
-    }
-
-
-    onCharLoaded = (char: CharInfoCharType) => {
-
-        this.setState({char, loading: false})
-    }
-
-
-    updateChar = () => {
-        this.setState({loading: true})
-        const {charId} = this.props
-
-
+    const updateChar = () => {
+        setLoading(true)
         if (!charId) {
-            this.setState({loading: false})
+            setLoading(false)
         }
         {
-            charId && this.marvelService.getCharacter(charId).then(this.onCharLoaded).catch(this.onError)
+            charId && marvelService.getCharacter(charId).then(onCharLoaded).catch(onError)
         }
     }
 
 
-    onError = () => {
-        this.setState({loading: false, error: true})
-
+    const onError = () => {
+        setLoading(false)
+        setError(true)
     }
 
-
-    render() {
-
-        const {char, loading, error} = this.state
+    const isLoading = loading ? <Spinner/> : char.comics || char.name ? <ViewCharInfo char={char}/> :
+        <CharComicsItem comics={null}/>
 
 
-        const isLoading = loading ? <Spinner/> : char.comics || char.name ? <ViewCharInfo char={char}/> :
-            <CharComicsItem comics={null}/>
+    const isErrorMsg = error ? <ErrorMsg/> : isLoading
 
-
-        const isErrorMsg = error ? <ErrorMsg/> : isLoading
-
-        return (
-            <div className="char__info">
-                {isErrorMsg}
-            </div>
-        )
-    }
+    return (<div className="char__info">
+        {isErrorMsg}
+    </div>)
 }
 
 
@@ -126,8 +92,9 @@ const ViewCharInfo = (props: ViewCharInfoPropsType) => {
     const {char} = props
     const {name, description, thumbnail, wikiUrl, comics, homePage} = char
 
-    const comicsItems = comics ? comics.length === 0 ? 'Can\'t find anyone comics' : comics.map((t, i) => <CharComicsItem
-            key={i} comics={t}/>) :
+    const comicsItems = comics ? comics.length === 0 ? 'Can\'t find anyone comics' : comics.map((t, i) =>
+            <CharComicsItem
+                key={i} comics={t}/>) :
         <CharComicsItem comics={null}/>
     const notAvailableImg = 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg'
     const correctImgClass = thumbnail === notAvailableImg ? 'char__badBasics' : 'char__basics'
