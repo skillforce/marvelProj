@@ -1,7 +1,7 @@
 import error from './error.gif';
 import s from './ErrorMsg.module.scss';
 
-const{ErrorImg}=s;
+const {ErrorImg} = s;
 
 
 export const ErrorMsg = () => {

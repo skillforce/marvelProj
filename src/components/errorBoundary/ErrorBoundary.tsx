@@ -2,8 +2,8 @@ import {Component} from 'react';
 import {ErrorMsg} from '../ErrorMsg/ErrorMsg';
 
 
-type ErrorBoundaryStateType ={
-    error:boolean
+type ErrorBoundaryStateType = {
+    error: boolean
 }
 
 
@@ -21,9 +21,9 @@ export class ErrorBoundary extends Component<{}, ErrorBoundaryStateType> {
 
     render() {
         const {error} = this.state
-        if(error){
-            return(
-           <ErrorMsg/>
+        if (error) {
+            return (
+                <ErrorMsg/>
             )
         }
 

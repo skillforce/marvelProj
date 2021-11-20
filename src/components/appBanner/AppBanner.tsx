@@ -4,8 +4,6 @@ import avengersLogo from '../../resources/img/Avengers_logo.png';
 import React from 'react';
 
 
-
-
 const AppBanner = () => {
     return (
         <div className="app__banner">

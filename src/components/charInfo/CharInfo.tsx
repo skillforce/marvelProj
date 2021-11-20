@@ -1,8 +1,7 @@
 import './charInfo.scss';
 import thor from '../../resources/img/thor.jpeg';
-import {Component, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {MarvelService} from '../../services/MarvelService';
-import React from 'react';
 import {CharComicsItem} from './CharComicsItem/CharComicsItem';
 import Spinner from '../preloader/preloader';
 import {ErrorMsg} from '../ErrorMsg/ErrorMsg';
@@ -124,7 +123,6 @@ const ViewCharInfo = (props: ViewCharInfoPropsType) => {
             </ul>
         </>
     )
-
 }
 
 export default CharInfo;
