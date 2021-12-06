@@ -1,7 +1,8 @@
 import {Navigate, Route, Routes} from 'react-router-dom';
-import {CharPage} from '../components/app/CharPage';
-import {ComicsPage} from '../components/app/ComicsPage';
+import {MainPage} from '../components/Pages/MainPage';
+import {ComicsPage} from '../components/Pages/ComicsPage';
 import SingleComic from '../components/singleComic/SingleComic';
+import {Page404} from '../components/Pages/Page404';
 
 export const PATH = {
     COMICS: '/comics',
@@ -16,12 +17,12 @@ export const RoutesInfo = () => {
         <div>
             <Routes>
                 <Route path={'/marvelProj/'||'/'} element={<Navigate replace to={PATH.CHARPAGE}/>}/>
-                <Route path={PATH.CHARPAGE} element={<CharPage/>}/>
+                <Route path={PATH.CHARPAGE} element={<MainPage/>}/>
                 <Route path={PATH.COMICS} element={<ComicsPage/>}/>
                 <Route path={PATH.SINGLECOMIC} element={<SingleComic/>}/>
 
 
-                {/*<Route path={"*"} element={<Error404/>}/>*/}
+                <Route path={"*"} element={<Page404/>}/>
             </Routes>
         </div>
 

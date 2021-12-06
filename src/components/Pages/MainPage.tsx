@@ -6,7 +6,7 @@ import React, {useState} from 'react';
 import {ErrorBoundary} from '../errorBoundary/ErrorBoundary';
 
 
-export const CharPage = () => {
+export const MainPage = () => {
 
 
     const [selectedChar, setChar] = useState<number | null>(null)
