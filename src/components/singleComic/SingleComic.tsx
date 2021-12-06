@@ -1,5 +1,7 @@
 import './singleComic.scss';
 import xMen from '../../resources/img/x-men.png';
+import {NavLink} from 'react-router-dom';
+import {PATH} from '../../Routes/Routes';
 
 const SingleComic = () => {
     return (
@@ -15,7 +17,7 @@ const SingleComic = () => {
                 <p className="single-comic__descr">Language: en-us</p>
                 <div className="single-comic__price">9.99$</div>
             </div>
-            <a href="#" className="single-comic__back">Back to all</a>
+            <NavLink to={PATH.COMICS} className="single-comic__back">Back to all</NavLink>
         </div>
     )
 }

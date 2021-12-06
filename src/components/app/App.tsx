@@ -5,6 +5,8 @@ import CharInfo from '../charInfo/CharInfo';
 import decoration from '../../resources/img/vision.png';
 import React, {useState} from 'react';
 import {ErrorBoundary} from '../errorBoundary/ErrorBoundary';
+import ComicsList from '../ComicsList/ComicsList';
+import {RoutesInfo} from '../../Routes/Routes';
 
 
 export const App = () => {
@@ -20,18 +22,7 @@ export const App = () => {
         <div className="app">
             <AppHeader/>
             <main>
-                <ErrorBoundary>
-                    <RandomChar/>
-                </ErrorBoundary>
-                <div className="char__content">
-                    <ErrorBoundary>
-                        <CharList charId={selectedChar} setSelectedChar={setSelectedChar}/>
-                    </ErrorBoundary>
-                    <ErrorBoundary>
-                        <CharInfo charId={selectedChar}/>
-                    </ErrorBoundary>
-                </div>
-                <img className="bg-decoration" src={decoration} alt="vision"/>
+                <RoutesInfo/>
             </main>
 
         </div>
