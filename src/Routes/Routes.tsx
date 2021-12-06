@@ -2,7 +2,7 @@ import {Navigate, Route, Routes} from 'react-router-dom';
 import {MainPage} from '../components/Pages/MainPage';
 import {ComicsPage} from '../components/Pages/ComicsPage';
 import SingleComic from '../components/singleComic/SingleComic';
-import {Page404} from '../components/Pages/Page404';
+import {NotFoundPage404} from '../components/Pages/NotFoundPage404';
 
 export const PATH = {
     COMICS: '/comics',
@@ -22,7 +22,7 @@ export const RoutesInfo = () => {
                 <Route path={PATH.SINGLECOMIC} element={<SingleComic/>}/>
 
 
-                <Route path={"*"} element={<Page404/>}/>
+                <Route path={"*"} element={<NotFoundPage404/>}/>
             </Routes>
         </div>
 
