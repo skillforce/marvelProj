@@ -92,10 +92,10 @@ const ViewCharInfo = (props: ViewCharInfoPropsType) => {
                 <div>
                     <div className="char__info-name">{name ? name : 'No name'}</div>
                     <div className="char__btns">
-                        <a target={'_blank'} href={homePage ? homePage : '#'} className="button button__main">
+                        <a target={'_blank'} href={homePage ? homePage : '#'} className="button button__main" rel="noreferrer">
                             <div className="inner">homepage</div>
                         </a>
-                        <a target={'_blank'} href={wikiUrl ? wikiUrl : '#'} className="button button__secondary">
+                        <a target={'_blank'} href={wikiUrl ? wikiUrl : '#'} className="button button__secondary" rel="noreferrer">
                             <div className="inner">Wiki</div>
                         </a>
                     </div>
