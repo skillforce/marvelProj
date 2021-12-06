@@ -2,7 +2,7 @@ import './randomChar.scss';
 import thor from '../../resources/img/thor.jpeg';
 import mjolnir from '../../resources/img/mjolnir.png';
 import React, {useEffect, useState} from 'react';
-import {MarvelService} from '../../services/MarvelService';
+import {useMarvelService} from '../../services/MarvelService';
 import Spinner from '../preloader/preloader';
 import {ErrorMsg} from '../ErrorMsg/ErrorMsg';
 
@@ -16,15 +16,10 @@ export type CharType = {
     id: number | null
 }
 
-type RandomCharStateType = {
-    char: CharType
-    loading: boolean
-    error: boolean
-}
 
 export const RandomChar = () => {
 
-    const marvelService = new MarvelService()
+    const {loading, error, getCharacter,clearError} = useMarvelService()
 
     const [char, setChar] = useState<CharType>({
         name: null,
@@ -34,8 +29,6 @@ export const RandomChar = () => {
         wikiUrl: null,
         id: null
     })
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<boolean>(false);
 
 
     useEffect(() => {
@@ -45,21 +38,13 @@ export const RandomChar = () => {
 
     const onCharLoaded = (char: CharType) => {
         setChar(char);
-        setLoading(false)
     }
 
     const updateChar = (id: number = Math.floor(Math.random() * (1011400 - 1011000) + 1011000)) => {
-        setLoading(true)
-        marvelService
-            .getCharacter(id)
-            .then(onCharLoaded)
-            .catch(onError)
+        clearError()
+        getCharacter(id).then(onCharLoaded)
     }
 
-    const onError = () => {
-        setLoading(false)
-        setError(true)
-    }
 
     const isLoading = loading ? <Spinner/> : <View char={char}/>
     const errorMsg = error ? <ErrorMsg/> : isLoading

@@ -1,7 +1,7 @@
 import './charInfo.scss';
 import thor from '../../resources/img/thor.jpeg';
 import React, {useEffect, useState} from 'react';
-import {MarvelService} from '../../services/MarvelService';
+import {useMarvelService} from '../../services/MarvelService';
 import {CharComicsItem} from './CharComicsItem/CharComicsItem';
 import Spinner from '../preloader/preloader';
 import {ErrorMsg} from '../ErrorMsg/ErrorMsg';
@@ -34,7 +34,7 @@ type ViewCharInfoPropsType = {
 
 export const CharInfo = (props: CharInfoPropsType) => {
     const {charId} = props
-    const marvelService = new MarvelService()
+    const {error, loading, getCharacter,clearError} = useMarvelService()
     const [char, setChar] = useState<CharInfoCharType>({
         name: null,
         description: null,
@@ -45,13 +45,9 @@ export const CharInfo = (props: CharInfoPropsType) => {
         comics: null
     })
 
-    const [loading, setLoading] = useState<boolean>(false)
-    const [error, setError] = useState<boolean>(false)
-
 
     const onCharLoaded = (char: CharInfoCharType) => {
         setChar(char)
-        setLoading(false)
     }
 
     useEffect(() => {
@@ -60,19 +56,10 @@ export const CharInfo = (props: CharInfoPropsType) => {
 
 
     const updateChar = () => {
-        setLoading(true)
-        if (!charId) {
-            setLoading(false)
-        }
+        clearError()
         {
-            charId && marvelService.getCharacter(charId).then(onCharLoaded).catch(onError)
+            charId && getCharacter(charId).then(onCharLoaded)
         }
-    }
-
-
-    const onError = () => {
-        setLoading(false)
-        setError(true)
     }
 
     const isLoading = loading ? <Spinner/> : char.comics || char.name ? <ViewCharInfo char={char}/> :

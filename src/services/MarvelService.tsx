@@ -1,32 +1,23 @@
-export class MarvelService {
+import {useHttp} from '../hooks/http.hook';
 
-    _apiBase = 'https://gateway.marvel.com:443/v1/public/';
-    _apiKey = '0683f9118f5881e432d90247cd0fc519';
-    _baseOffset = 210
+export const useMarvelService = () => {
+    const {loading, request, error,clearError} = useHttp();
 
+    const _apiBase = 'https://gateway.marvel.com:443/v1/public/';
+    const _apiKey = '0683f9118f5881e432d90247cd0fc519';
+    const _baseOffset = 210;
 
-    getResource = async (url: string) => {
-        const res = await fetch(url)
-
-        if (!res.ok) {
-            throw new Error(`Could not fetch ${url}, status: ${res.status}`)
-        }
-
-        return await res.json()
+    const getAllCharacters = async (offset: number = _baseOffset) => {
+        const res: any = await request(`${_apiBase}characters?limit=9&offset=${offset}&apikey=${_apiKey}`);
+        return res.data.results.map(_transformCharacter)
     }
 
-
-    getAllCharacters = async (offset:number=this._baseOffset) => {
-        const res: any = await this.getResource(`${this._apiBase}characters?limit=9&offset=${offset}&apikey=${this._apiKey}`);
-        return res.data.results.map(this._transformCharacter)
+    const getCharacter = async (id: number) => {
+        const res = await request(`${_apiBase}characters/${id}?apikey=${_apiKey}`);
+        return _transformCharacter(res)
     }
 
-    getCharacter = async (id: number) => {
-        const res = await this.getResource(`${this._apiBase}characters/${id}?apikey=${this._apiKey}`);
-        return this._transformCharacter(res)
-    }
-
-    _transformCharacter = (res: any) => {
+    const _transformCharacter = (res: any) => {
         let character = res.data ? res.data.results[0] : res
         const {name, description, thumbnail, urls, id, comics} = character
         const correctThumbNail = `${thumbnail.path}.${thumbnail.extension}`
@@ -46,4 +37,5 @@ export class MarvelService {
     }
 
 
+    return{loading,error,getAllCharacters,getCharacter,_baseOffset,clearError}
 }

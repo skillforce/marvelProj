@@ -1,18 +1,11 @@
 import './charList.scss';
 import {Char} from './char/Char';
 import React, {useEffect, useState} from 'react';
-import {MarvelService} from '../../services/MarvelService';
+import {useMarvelService} from '../../services/MarvelService';
 import {CharType} from '../randomChar/RandomChar';
 import Spinner from '../preloader/preloader';
 import {ErrorMsg} from '../ErrorMsg/ErrorMsg';
 
-type CharListStateType = {
-    charactersData: CharType[]
-    loading: boolean
-    error: boolean,
-    pageOffset: number
-    charEnded: boolean
-}
 
 type CharListPropsType = {
     setSelectedChar: (id: number | null) => void
@@ -22,11 +15,9 @@ type CharListPropsType = {
 
 export const CharList = (props: CharListPropsType) => {
     const {setSelectedChar, charId} = props
-    const marvelService = new MarvelService()
+    const {getAllCharacters,loading,error,_baseOffset,clearError} = useMarvelService()
     const [charactersData, setCharactersData] = useState<CharType[]>([])
-    const [loading, setLoading] = useState<boolean>(true)
-    const [error, setError] = useState<boolean>(false)
-    const [pageOffset, setPageOffSet] = useState<number>(marvelService._baseOffset)
+    const [pageOffset, setPageOffSet] = useState<number>(_baseOffset)
     const [charEnded, setCharEnded] = useState<boolean>(false)
 
 
@@ -35,19 +26,13 @@ export const CharList = (props: CharListPropsType) => {
     }, [pageOffset])
 
     const onCharLoaded = (charactersData: CharType[]) => {
-        setLoading(false)
         setCharactersData(charactersData)
-    }
-
-    const onError = () => {
-        setLoading(false)
-        setError(true)
     }
 
 
     const updateCharListItem = () => {
-        setLoading(true)
-        marvelService.getAllCharacters(pageOffset)
+        clearError()
+         getAllCharacters(pageOffset)
             .then(res => {
                 {
                     res.length < 9 && setCharEnded(true);
@@ -58,7 +43,6 @@ export const CharList = (props: CharListPropsType) => {
 
                 onCharLoaded(res)
             })
-            .catch(onError)
     }
 
     const onClickLoadMoreBtnHandler = (offset: number) => {
