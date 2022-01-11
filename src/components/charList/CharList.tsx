@@ -7,6 +7,7 @@ import Spinner from '../preloader/preloader';
 import {ErrorMsg} from '../ErrorMsg/ErrorMsg';
 
 
+
 type CharListPropsType = {
     setSelectedChar: (id: number | null) => void
     charId: number | null
@@ -15,7 +16,7 @@ type CharListPropsType = {
 
 export const CharList = (props: CharListPropsType) => {
     const {setSelectedChar, charId} = props
-    const {getAllCharacters,loading,error,_baseOffset,clearError} = useMarvelService()
+    const {getAllCharacters, loading, error, _baseOffset, clearError} = useMarvelService()
     const [charactersData, setCharactersData] = useState<CharType[]>([])
     const [pageOffset, setPageOffSet] = useState<number>(_baseOffset)
     const [charEnded, setCharEnded] = useState<boolean>(false)
@@ -32,7 +33,7 @@ export const CharList = (props: CharListPropsType) => {
 
     const updateCharListItem = () => {
         clearError()
-         getAllCharacters(pageOffset)
+        getAllCharacters(pageOffset)
             .then(res => {
                 {
                     res.length < 9 && setCharEnded(true);
@@ -53,12 +54,14 @@ export const CharList = (props: CharListPropsType) => {
 
 
     const isLoading = loading ? <div className={'spinerPage'}><Spinner/></div> :
-        <ul className="char__grid"> {charactersData.map(t => <Char charId={charId}
-                                                                   key={t.id}
-                                                                   name={t.name}
-                                                                   img={t.thumbnail}
-                                                                   id={t.id}
-                                                                   setSelectedChar={setSelectedChar}/>)}</ul>
+        <ul className="char__grid"> {charactersData.map((t) =>
+
+                <Char charId={charId}
+                      key={t.id}
+                      name={t.name}
+                      img={t.thumbnail}
+                      id={t.id}
+                      setSelectedChar={setSelectedChar}/>)}</ul>
 
 
     const isError = error ? <ErrorMsg/> : isLoading;

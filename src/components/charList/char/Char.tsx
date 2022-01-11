@@ -1,6 +1,7 @@
 import './char.scss';
 import abyss from '../../../resources/img/abyss.jpg';
 import React from 'react';
+import {CSSTransition} from 'react-transition-group'
 
 
 type CharPropsType = {
@@ -18,11 +19,15 @@ export const Char = (props: CharPropsType) => {
     const correctImgClass = img === notAvailableImg ? 'char__badItem' : 'char__item'
     const activeItem = charId === id ? img === notAvailableImg ? 'char__badItem char_selected' : 'char__item char_selected' : correctImgClass
     return (
+        <CSSTransition key={id}
+                       timeout={500}
+                       classNames={activeItem}>
         <li onClick={() => {
             setSelectedChar(id)
         }} className={activeItem}>
             <img src={img ? img : abyss} alt="abyss"/>
             <div className="char__name">{name ? name : 'not found'}</div>
         </li>
+        </CSSTransition>
     )
 }

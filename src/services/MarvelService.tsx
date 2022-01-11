@@ -16,6 +16,12 @@ export const useMarvelService = () => {
         const res = await request(`${_apiBase}characters/${id}?apikey=${_apiKey}`);
         return _transformCharacter(res)
     }
+    const getCharacterByName = async (name: any) => {
+        const res = await request(`${_apiBase}characters?name=${name}&apikey=${_apiKey}`);
+        debugger
+        return res.data.results.length>0 ? _transformCharacter(res) : error
+
+    }
 
 
     const getAllComics = async (offset = 0) => {
@@ -23,8 +29,8 @@ export const useMarvelService = () => {
         return res.data.results.map(_transformComics);
     }
 
-    const getComics = async (id:number) => {
-        const res = await request(`${_apiBase}comics/${id}?${_apiKey}`);
+    const getComics = async (id: number) => {
+        const res = await request(`${_apiBase}comics/${id}?apikey=${_apiKey}`);
         return _transformComics(res.data.results[0]);
     }
 
@@ -45,7 +51,6 @@ export const useMarvelService = () => {
         let character = res.data ? res.data.results[0] : res
         const {name, description, thumbnail, urls, id, comics} = character
         const correctThumbNail = `${thumbnail.path}.${thumbnail.extension}`
-
         const correctComicsItems = comics.items.length > 10 ? comics.items.slice(0, 10) : comics.items
         const correctDescription = description ? `${description.slice(0, 210)}...` : 'There is no description for this character'
 
@@ -61,5 +66,15 @@ export const useMarvelService = () => {
     }
 
 
-    return {loading, error, getAllCharacters, getCharacter, _baseOffset, clearError, getAllComics,getComics}
+    return {
+        loading,
+        error,
+        getAllCharacters,
+        getCharacter,
+        getCharacterByName,
+        _baseOffset,
+        clearError,
+        getAllComics,
+        getComics
+    }
 }

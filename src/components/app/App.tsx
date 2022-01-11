@@ -1,6 +1,7 @@
 import AppHeader from '../appHeader/AppHeader';
-import React from 'react';
+import React, {Suspense} from 'react'; //for React.lazy working( fallback giving component to switch with not-working component)
 import {RoutesInfo} from '../../Routes/Routes';
+import Spinner from '../preloader/preloader';
 
 
 export const App = () => {
@@ -9,7 +10,9 @@ export const App = () => {
         <div className="app">
             <AppHeader/>
             <main>
-                <RoutesInfo/>
+                <Suspense fallback={<Spinner/>}>
+                    <RoutesInfo/>
+                </Suspense>
             </main>
 
         </div>

@@ -2,12 +2,11 @@ import {useState, useEffect} from 'react';
 import {useMarvelService} from '../../services/MarvelService';
 import Spinner from '../preloader/preloader';
 import {ErrorMsg} from '../ErrorMsg/ErrorMsg';
-
 import './ComicsList.scss';
 import {NavLink} from 'react-router-dom';
-import {PATH} from '../../Routes/Routes';
 
-type OneComicsType = {
+
+export type OneComicsType = {
     id: number,
     title: string,
     description: string,
@@ -37,7 +36,8 @@ const ComicsList = () => {
             .then(onComicsListLoaded)
     }
 
-    const onComicsListLoaded = (newComicsList: OneComicsType[]) => {
+    const onComicsListLoaded = async (newComicsList: OneComicsType[]) => {
+
         let ended = false;
         if (newComicsList.length < 8) {
             ended = true;
@@ -48,11 +48,12 @@ const ComicsList = () => {
         setComicsEnded(ended);
     }
 
+
     function renderItems(arr: OneComicsType[]) {
-        const items = arr.map((item: OneComicsType, i: number) => {
+        const items = arr.map(item => {
             return (
-                <li className="comics__item" key={i}>
-                    <NavLink to={PATH.SINGLECOMIC}>
+                <li className="comics__item" key={item.id}>
+                    <NavLink to={`/comics/${item.id}`}>
                         <img src={item.thumbnail} alt={item.title} className="comics__item-img"/>
                         <div className="comics__item-name">{item.title}</div>
                         <div className="comics__item-price">{item.price}</div>
@@ -73,6 +74,7 @@ const ComicsList = () => {
     const errorMessage = error ? <ErrorMsg/> : null;
     const spinner = loading && !newItemLoading ? <Spinner/> : null;
 
+
     return (
         <div className="comics__list">
             {errorMessage}
@@ -81,7 +83,7 @@ const ComicsList = () => {
             <button
                 disabled={newItemLoading}
                 style={{'display': comicsEnded ? 'none' : 'block'}}
-                className="button button__main button__long"
+                className={newItemLoading?"button button__secondary button__long" : "button button__main button__long"}
                 onClick={() => onRequest(offset)}>
                 <div className="inner">load more</div>
             </button>

@@ -4,9 +4,10 @@ import CharInfo from '../charInfo/CharInfo';
 import decoration from '../../resources/img/vision.png';
 import React, {useState} from 'react';
 import {ErrorBoundary} from '../errorBoundary/ErrorBoundary';
+import {CharSearchForm} from '../CharSearchForm/CharSearchForm';
 
 
-export const MainPage = () => {
+const MainPage = () => {
 
 
     const [selectedChar, setChar] = useState<number | null>(null)
@@ -24,11 +25,19 @@ export const MainPage = () => {
                 <ErrorBoundary>
                     <CharList charId={selectedChar} setSelectedChar={setSelectedChar}/>
                 </ErrorBoundary>
-                <ErrorBoundary>
-                    <CharInfo charId={selectedChar}/>
-                </ErrorBoundary>
+                <div>
+                    <ErrorBoundary>
+                        <CharInfo charId={selectedChar}/>
+                    </ErrorBoundary>
+                    <ErrorBoundary>
+                        <CharSearchForm/>
+                    </ErrorBoundary>
+                </div>
+
             </div>
             <img className="bg-decoration" src={decoration} alt="vision"/>
         </div>
     )
 }
+
+export default MainPage;
