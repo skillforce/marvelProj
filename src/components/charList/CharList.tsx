@@ -54,9 +54,7 @@ export const CharList = (props: CharListPropsType) => {
 
 
     const isLoading = loading ? <div className={'spinerPage'}><Spinner/></div> :
-        <ul className="char__grid"> {charactersData.map((t) =>
-
-                <Char charId={charId}
+        <ul className="char__grid"> {charactersData.map((t) =><Char charId={charId}
                       key={t.id}
                       name={t.name}
                       img={t.thumbnail}

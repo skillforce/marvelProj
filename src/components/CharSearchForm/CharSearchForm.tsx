@@ -25,7 +25,7 @@ export const CharSearchForm = () => {
             <Formik
                 initialValues={{character: ''}}
                 validationSchema={object({
-                    character: string().required()
+                    character: string().required('This field is required')
                 })}
                 onSubmit={(values) => {
                     getCharacterByName(values.character)

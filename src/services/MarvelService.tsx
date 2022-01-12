@@ -18,7 +18,6 @@ export const useMarvelService = () => {
     }
     const getCharacterByName = async (name: any) => {
         const res = await request(`${_apiBase}characters?name=${name}&apikey=${_apiKey}`);
-        debugger
         return res.data.results.length>0 ? _transformCharacter(res) : error
 
     }

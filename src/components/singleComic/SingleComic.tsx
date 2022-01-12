@@ -2,12 +2,13 @@ import './singleComic.scss';
 import xMen from '../../resources/img/x-men.png';
 import {NavLink, useParams} from 'react-router-dom';
 import {PATH} from '../../Routes/Routes';
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {OneComicsType} from '../ComicsList/ComicsList';
 import {useMarvelService} from '../../services/MarvelService';
 import {ErrorMsg} from '../ErrorMsg/ErrorMsg';
 import Spinner from '../preloader/preloader';
 import {debug} from 'util';
+import {Helmet} from 'react-helmet';
 
 
 type SingleComicPropsType = {
@@ -96,10 +97,14 @@ type ViewComicPropsType = {
 
 const ViewComic = ({type, comic, character}: ViewComicPropsType) => {
     if (type === 'comic' && comic) {
-        const {language, pageCount, price, title, thumbnail, description} = comic!
+        const {language, pageCount, price, title, thumbnail, description} = comic
 
         return (
             <div className="single-comic">
+                <Helmet>
+                    <meta name="description" content="Comic Info."/>
+                    <title>{title}</title>
+                </Helmet>
                 <img src={thumbnail} alt="x-men" className="single-comic__img"/>
                 <div className="single-comic__info">
                     <h2 className="single-comic__name">{title}</h2>
@@ -116,6 +121,10 @@ const ViewComic = ({type, comic, character}: ViewComicPropsType) => {
 
         return (
             <div className="single-comic">
+                <Helmet>
+                    <meta name="description" content="Character Info."/>
+                    <title>{name}</title>
+                </Helmet>
                 <img src={thumbnail} alt="x-men" className="single-comic__img"/>
                 <div className="single-comic__info">
                     <h2 className="single-comic__name">{name}</h2>

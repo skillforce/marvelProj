@@ -5,6 +5,7 @@ import decoration from '../../resources/img/vision.png';
 import React, {useState} from 'react';
 import {ErrorBoundary} from '../errorBoundary/ErrorBoundary';
 import {CharSearchForm} from '../CharSearchForm/CharSearchForm';
+import {Helmet} from 'react-helmet';
 
 
 const MainPage = () => {
@@ -17,7 +18,11 @@ const MainPage = () => {
 
 
     return (
-        <div>
+        <>
+            <Helmet>
+                <meta name="description" content="Marvel information portal"/>
+                <title>Marvel information portal</title>
+            </Helmet>
             <ErrorBoundary>
                 <RandomChar/>
             </ErrorBoundary>
@@ -36,7 +41,7 @@ const MainPage = () => {
 
             </div>
             <img className="bg-decoration" src={decoration} alt="vision"/>
-        </div>
+        </>
     )
 }
 
