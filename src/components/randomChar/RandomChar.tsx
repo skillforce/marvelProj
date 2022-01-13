@@ -3,8 +3,7 @@ import thor from '../../resources/img/thor.jpeg';
 import mjolnir from '../../resources/img/mjolnir.png';
 import React, {useEffect, useState} from 'react';
 import {useMarvelService} from '../../services/MarvelService';
-import Spinner from '../preloader/preloader';
-import {ErrorMsg} from '../ErrorMsg/ErrorMsg';
+import {setUpContent} from '../../utils/setContent';
 
 
 export type CharType = {
@@ -19,7 +18,7 @@ export type CharType = {
 
 export const RandomChar = () => {
 
-    const {loading, error, getCharacter,clearError} = useMarvelService()
+    const {getCharacter, clearError, process, setProcess} = useMarvelService()
 
     const [char, setChar] = useState<CharType>({
         name: null,
@@ -38,20 +37,21 @@ export const RandomChar = () => {
 
     const onCharLoaded = (char: CharType) => {
         setChar(char);
+
     }
 
     const updateChar = (id: number = Math.floor(Math.random() * (1011400 - 1011000) + 1011000)) => {
         clearError()
-        getCharacter(id).then(onCharLoaded)
+        getCharacter(id)
+            .then(onCharLoaded)
+            .then(() => setProcess('confirmed'))
+
     }
 
 
-    const isLoading = loading ? <Spinner/> : <View char={char}/>
-    const errorMsg = error ? <ErrorMsg/> : isLoading
-
     return (
         <div className="randomchar">
-            {errorMsg}
+            {setUpContent(process, char, View)}
             <div className="randomchar__static">
                 <p className="randomchar__title">
                     Random character for today!<br/>
@@ -71,13 +71,13 @@ export const RandomChar = () => {
 }
 
 type ViewPropsType = {
-    char: CharType
+    data: CharType
 }
 
 
-const View = (char: ViewPropsType) => {
+const View = (data: ViewPropsType) => {
 
-    const {name, description, thumbnail, homePage, wikiUrl} = char.char;
+    const {name, description, thumbnail, homePage, wikiUrl} = data.data;
     const notAvailableImg = 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg'
     const real = thumbnail === notAvailableImg
     const newImgStyle = real ? 'randomchar__badImg' : 'randomchar__img'
@@ -95,7 +95,8 @@ const View = (char: ViewPropsType) => {
                 <a target={'_blank'} href={homePage ? homePage : '#'} className="button button__main" rel="noreferrer">
                     <div className="inner">homepage</div>
                 </a>
-                <a target={'_blank'} href={wikiUrl ? wikiUrl : '#'} className="button button__secondary" rel="noreferrer">
+                <a target={'_blank'} href={wikiUrl ? wikiUrl : '#'} className="button button__secondary"
+                   rel="noreferrer">
                     <div className="inner">Wiki</div>
                 </a>
             </div>

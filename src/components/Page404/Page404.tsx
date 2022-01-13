@@ -1,7 +1,5 @@
-import {NavLink, useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import {ErrorMsg} from '../ErrorMsg/ErrorMsg';
-import {PATH} from '../../Routes/Routes';
-
 
 
 export const Page404 = () => {

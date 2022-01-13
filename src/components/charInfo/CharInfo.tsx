@@ -3,8 +3,7 @@ import thor from '../../resources/img/thor.jpeg';
 import React, {useEffect, useState} from 'react';
 import {useMarvelService} from '../../services/MarvelService';
 import {CharComicsItem} from './CharComicsItem/CharComicsItem';
-import Spinner from '../preloader/preloader';
-import {ErrorMsg} from '../ErrorMsg/ErrorMsg';
+import {setUpContent} from '../../utils/setContent';
 
 
 type CharInfoPropsType = {
@@ -16,7 +15,7 @@ export type ComicsItemsType = {
 }
 
 
-type CharInfoCharType = {
+export type CharInfoCharType = {
     name: null | string
     description: null | string
     thumbnail: string | null
@@ -28,13 +27,13 @@ type CharInfoCharType = {
 
 
 type ViewCharInfoPropsType = {
-    char: CharInfoCharType
+    data: CharInfoCharType
 }
 
 
 export const CharInfo = (props: CharInfoPropsType) => {
     const {charId} = props
-    const {error, loading, getCharacter,clearError} = useMarvelService()
+    const {setProcess, getCharacter, clearError, process} = useMarvelService()
     const [char, setChar] = useState<CharInfoCharType>({
         name: null,
         description: null,
@@ -56,27 +55,27 @@ export const CharInfo = (props: CharInfoPropsType) => {
 
 
     const updateChar = () => {
-        clearError()
-        {
-            charId && getCharacter(charId).then(onCharLoaded)
+        if (charId) {
+            clearError()
+            getCharacter(charId)
+                .then(onCharLoaded)
+                .then(() => (setProcess('confirmed')))
         }
     }
 
-    const isLoading = loading ? <Spinner/> : char.comics || char.name ? <ViewCharInfo char={char}/> :
-        <CharComicsItem comics={null}/>
 
 
-    const isErrorMsg = error ? <ErrorMsg/> : isLoading
+
 
     return (<div className="char__info">
-        {isErrorMsg}
+        {setUpContent(process, char ,ViewCharInfo)}
     </div>)
 }
 
 
-const ViewCharInfo = (props: ViewCharInfoPropsType) => {
-    const {char} = props
-    const {name, description, thumbnail, wikiUrl, comics, homePage} = char
+ export const ViewCharInfo = (props: ViewCharInfoPropsType) => {
+    const {data} = props
+    const {name, description, thumbnail, wikiUrl, comics, homePage} = data
 
     const comicsItems = comics ? comics.length === 0 ? 'Can\'t find anyone comics' : comics.map((t, i) =>
             <CharComicsItem
@@ -92,10 +91,12 @@ const ViewCharInfo = (props: ViewCharInfoPropsType) => {
                 <div>
                     <div className="char__info-name">{name ? name : 'No name'}</div>
                     <div className="char__btns">
-                        <a target={'_blank'} href={homePage ? homePage : '#'} className="button button__main" rel="noreferrer">
+                        <a target={'_blank'} href={homePage ? homePage : '#'} className="button button__main"
+                           rel="noreferrer">
                             <div className="inner">homepage</div>
                         </a>
-                        <a target={'_blank'} href={wikiUrl ? wikiUrl : '#'} className="button button__secondary" rel="noreferrer">
+                        <a target={'_blank'} href={wikiUrl ? wikiUrl : '#'} className="button button__secondary"
+                           rel="noreferrer">
                             <div className="inner">Wiki</div>
                         </a>
                     </div>

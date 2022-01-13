@@ -1,14 +1,12 @@
-import './singleComic.scss';
+import './singlePage.scss';
 import xMen from '../../resources/img/x-men.png';
 import {NavLink, useParams} from 'react-router-dom';
 import {PATH} from '../../Routes/Routes';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {OneComicsType} from '../ComicsList/ComicsList';
 import {useMarvelService} from '../../services/MarvelService';
-import {ErrorMsg} from '../ErrorMsg/ErrorMsg';
-import Spinner from '../preloader/preloader';
-import {debug} from 'util';
 import {Helmet} from 'react-helmet';
+import {setUpContent} from '../../utils/setContent';
 
 
 type SingleComicPropsType = {
@@ -16,7 +14,7 @@ type SingleComicPropsType = {
 }
 
 
-const SingleComic = ({type}: SingleComicPropsType) => {
+ const SinglePage = ({type}: SingleComicPropsType) => {
 
     const[character,setCharacter] = useState(null)
     const [comic, setComic] = useState<OneComicsType>({
@@ -33,71 +31,67 @@ const SingleComic = ({type}: SingleComicPropsType) => {
     });
 
 
-    const [newItemLoading, setNewItemLoading] = useState<boolean>(false);
+
+    let {id,name} = useParams()
 
 
-    let {id,name} = useParams();
-    console.log(name)
+    const {getComics, clearError,getCharacterByName,process,setProcess} = useMarvelService()
 
 
-    const {loading, error, getComics, clearError,getCharacterByName} = useMarvelService()
+     const updateComic = (id: number) => {
+         clearError()
 
+         getComics(id)
+             .then(onComicLoaded)
+             .then(()=>setProcess('confirmed'))
+     }
+     const updateCharacter =useCallback((name: string) => {
+         clearError()
+
+         getCharacterByName(name)
+             .then(onCharacterLoaded)
+             .then(()=>setProcess('confirmed'))
+     },[clearError])
 
     useEffect(() => {
-        {type==='comic' && updateComic(Number(id))}
-        {type==='character' && name && updateCharacter(name)}
+        if(type==='comic'){
+            updateComic(Number(id))
+        }else{
+            name && updateCharacter(name)
+        }
+    }, [type,id,name,updateCharacter])
 
-    }, [id])
 
 
-    const updateComic = (id: number) => {
-        clearError()
-        setNewItemLoading(true)
-        getComics(id)
-            .then(onComicLoaded)
-    }
-    const updateCharacter = (name: string) => {
-        clearError()
-        setNewItemLoading(true)
-        getCharacterByName(name)
-            .then(onCharacterLoaded)
-    }
 
 
     const onComicLoaded = (comic: OneComicsType) => {
         setComic(comic)
-        setNewItemLoading(false)
     }
     const onCharacterLoaded = (character: any) => {
         setCharacter(character)
-        setNewItemLoading(false)
     }
 
 
-    if (error) {
-        return (<ErrorMsg/>)
-    }
-    if (loading) {
-        return (<Spinner/>)
-    }
+
     return (
         <div>
-            {type === 'comic' && <ViewComic type={'comic'} comic={comic}/>}
-            {type === 'character' && <ViewComic type={'character'} character={character}/>}
+            {type === 'comic' && setUpContent(process,comic,ViewComic,'none','comic')}
+            {type === 'character' && setUpContent(process,character,ViewComic,'none','character')}
         </div>
     )
 }
 
 type ViewComicPropsType = {
-    comic?: OneComicsType
+
     type: 'comic' | 'character'
-    character?: any
+    data: any
 }
 
 
-const ViewComic = ({type, comic, character}: ViewComicPropsType) => {
-    if (type === 'comic' && comic) {
-        const {language, pageCount, price, title, thumbnail, description} = comic
+const ViewComic = ({type, data}: ViewComicPropsType) => {
+    if (type === 'comic' && data) {
+        const {language, pageCount, price, title, thumbnail, description} = data
 
         return (
             <div className="single-comic">
@@ -116,8 +110,8 @@ const ViewComic = ({type, comic, character}: ViewComicPropsType) => {
                 <NavLink to={PATH.COMICS} className="single-comic__back">Back to all</NavLink>
             </div>
         )
-    } else if (type === 'character' && character) {
-        const {name, thumbnail, description} = character
+    } else if (type === 'character' && data) {
+        const {name, thumbnail, description} = data
 
         return (
             <div className="single-comic">
@@ -125,7 +119,7 @@ const ViewComic = ({type, comic, character}: ViewComicPropsType) => {
                     <meta name="description" content="Character Info."/>
                     <title>{name}</title>
                 </Helmet>
-                <img src={thumbnail} alt="x-men" className="single-comic__img"/>
+                <img src={thumbnail} alt="char" className="single-comic__img"/>
                 <div className="single-comic__info">
                     <h2 className="single-comic__name">{name}</h2>
                     <p className="single-comic__descr">{description}</p>
@@ -137,4 +131,4 @@ const ViewComic = ({type, comic, character}: ViewComicPropsType) => {
 }
 
 
-export default SingleComic;
+export default SinglePage;

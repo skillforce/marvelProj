@@ -3,9 +3,7 @@ import {Char} from './char/Char';
 import React, {useEffect, useState} from 'react';
 import {useMarvelService} from '../../services/MarvelService';
 import {CharType} from '../randomChar/RandomChar';
-import Spinner from '../preloader/preloader';
-import {ErrorMsg} from '../ErrorMsg/ErrorMsg';
-
+import {setUpContent} from '../../utils/setContent';
 
 
 type CharListPropsType = {
@@ -16,7 +14,7 @@ type CharListPropsType = {
 
 export const CharList = (props: CharListPropsType) => {
     const {setSelectedChar, charId} = props
-    const {getAllCharacters, loading, error, _baseOffset, clearError} = useMarvelService()
+    const {getAllCharacters, _baseOffset, clearError, process, setProcess} = useMarvelService()
     const [charactersData, setCharactersData] = useState<CharType[]>([])
     const [pageOffset, setPageOffSet] = useState<number>(_baseOffset)
     const [charEnded, setCharEnded] = useState<boolean>(false)
@@ -35,44 +33,43 @@ export const CharList = (props: CharListPropsType) => {
         clearError()
         getAllCharacters(pageOffset)
             .then(res => {
-                {
-                    res.length < 9 && setCharEnded(true);
+                if(res.length < 9){
+                   setCharEnded(true);
+                }else{
+                    setCharEnded(false)
                 }
-                {
-                    res.length === 9 && setCharEnded(false);
-                }
-
                 onCharLoaded(res)
             })
+            .then(() => setProcess('confirmed'))
     }
 
     const onClickLoadMoreBtnHandler = (offset: number) => {
         setPageOffSet((pageOffset) => pageOffset + offset)
     }
 
-    const correctBtnClassName = loading ? 'button button__secondary button__long' : 'button button__main button__long'
+    const correctBtnClassName = process === 'loading' ? 'button button__secondary button__long' : 'button button__main button__long'
 
 
-    const isLoading = loading ? <div className={'spinerPage'}><Spinner/></div> :
-        <ul className="char__grid"> {charactersData.map((t) =><Char charId={charId}
-                      key={t.id}
-                      name={t.name}
-                      img={t.thumbnail}
-                      id={t.id}
-                      setSelectedChar={setSelectedChar}/>)}</ul>
+    const renderItems=(data:CharType[])=>{
+        return( <ul className="char__grid"> {charactersData.map((t) => <Char charId={charId}
+                                                                             key={t.id}
+                                                                             name={t.name}
+                                                                             img={t.thumbnail}
+                                                                             id={t.id}
+                                                                             setSelectedChar={setSelectedChar}/>)}</ul>)
+    }
 
 
-    const isError = error ? <ErrorMsg/> : isLoading;
 
     return (
         <div className="char__list">
-            {isError}
+            {setUpContent(process,charactersData,renderItems,'spinerPage')}
             <div className={'btn_block'}>
-                {pageOffset !== 210 && <button disabled={loading} onClick={() => onClickLoadMoreBtnHandler(-9)}
+                {pageOffset !== 210 && <button disabled={process==='loading'} onClick={() => onClickLoadMoreBtnHandler(-9)}
                                                className={correctBtnClassName}>
                     <div className="inner">Previous Page</div>
                 </button>}
-                {!charEnded && <button disabled={loading} onClick={() => onClickLoadMoreBtnHandler(9)}
+                {!charEnded && <button disabled={process==='loading'} onClick={() => onClickLoadMoreBtnHandler(9)}
                                        className={correctBtnClassName}>
                     <div className="inner">Next page</div>
                 </button>}

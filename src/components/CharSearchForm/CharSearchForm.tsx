@@ -9,7 +9,7 @@ import {NavLink} from 'react-router-dom';
 export const CharSearchForm = () => {
     const [searchCharacter, setSearchCharacter] = useState<any>(null)
     const [searchError, setSearchError] = useState<any>('')
-    const {getCharacterByName, loading} = useMarvelService()
+    const {getCharacterByName,process} = useMarvelService()
 
     const responseHandler = (res: any, values: any) => {
         if (res === null) {
@@ -41,7 +41,7 @@ export const CharSearchForm = () => {
                         <button
                             type="submit"
                             className="button button__main"
-                            disabled={loading}>
+                            disabled={process==='loading'}>
                             <div className="inner">find</div>
                         </button>
 

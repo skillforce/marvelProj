@@ -1,9 +1,8 @@
-import {useState, useEffect} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {useMarvelService} from '../../services/MarvelService';
-import Spinner from '../preloader/preloader';
-import {ErrorMsg} from '../ErrorMsg/ErrorMsg';
 import './ComicsList.scss';
 import {NavLink} from 'react-router-dom';
+import {setUpContent} from '../../utils/setContent';
 
 
 export type OneComicsType = {
@@ -24,17 +23,6 @@ const ComicsList = () => {
     const [offset, setOffset] = useState<number>(0);
     const [comicsEnded, setComicsEnded] = useState<boolean>(false);
 
-    const {loading, error, getAllComics} = useMarvelService();
-
-    useEffect(() => {
-        onRequest(offset, true);
-    }, [])
-
-    const onRequest = (offset: number, initial: boolean = false) => {
-        initial ? setNewItemLoading(false) : setNewItemLoading(true);
-        getAllComics(offset)
-            .then(onComicsListLoaded)
-    }
 
     const onComicsListLoaded = async (newComicsList: OneComicsType[]) => {
 
@@ -49,8 +37,24 @@ const ComicsList = () => {
     }
 
 
-    function renderItems(arr: OneComicsType[]) {
-        const items = arr.map(item => {
+
+    const {getAllComics,process,setProcess} = useMarvelService();
+    const onRequest = useCallback((offset: number, initial: boolean = false) => {
+        initial ? setNewItemLoading(false) : setNewItemLoading(true);
+        getAllComics(offset)
+            .then(onComicsListLoaded)
+            .then(()=>setProcess('confirmed'))
+    },[])
+
+    useEffect(() => {
+        onRequest(offset, true);
+    }, [offset])
+
+
+
+
+    function renderItems(data: OneComicsType[]) {
+        const items = data.map(item => {
             return (
                 <li className="comics__item" key={item.id}>
                     <NavLink to={`/comics/${item.id}`}>
@@ -69,17 +73,10 @@ const ComicsList = () => {
         )
     }
 
-    const items = renderItems(comicsList);
-
-    const errorMessage = error ? <ErrorMsg/> : null;
-    const spinner = loading && !newItemLoading ? <Spinner/> : null;
-
 
     return (
         <div className="comics__list">
-            {errorMessage}
-            {spinner}
-            {items}
+            {setUpContent(process,comicsList,()=>renderItems(comicsList))}
             <button
                 disabled={newItemLoading}
                 style={{'display': comicsEnded ? 'none' : 'block'}}
